@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    container_name: laravel_challenge_db
+    environment:
+      MYSQL_ROOT_PASSWORD: "senhateste"
+      MYSQL_DATABASE: "challenge"
+    volumes:
+      - ./astral-db-data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    container_name: astral_adminer
+    ports:
+      - 8080:8080
