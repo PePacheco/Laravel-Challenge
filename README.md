@@ -23,4 +23,4 @@ php artisan command:import
 ```
 
 ## 5# Step
-Wait untill a message appears on your terminal pointing that the processed was done successfully
+Wait untill a message appears on your terminal pointing that the process worked successfully
