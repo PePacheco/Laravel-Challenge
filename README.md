@@ -1,5 +1,5 @@
 
-## Steps to run the application
+# Steps to run the application
 
 ## 1# Step
 Change the name of the .env.example file to .env
