@@ -33,39 +33,89 @@ class ImportManager extends Command
     {
         $data = json_decode(file_get_contents('challenge.json'), false);
 
-        ini_set('max_execution_time', 12000);
+        ini_set('max_execution_time', 120000);
         DB::transaction(function() use ($data) {
+            $counter = 0;
             foreach($data as $client) {
-                $dates = explode("/", $client->credit_card->expirationDate);
+                $counter++;
 
-                $newCreditCard = new CreditCard();
-                $newCreditCard->name = $client->credit_card->name;
-                $newCreditCard->type = $client->credit_card->type;
-                $newCreditCard->number = $client->credit_card->number;
-                $newCreditCard->expirationDateDay = $dates[0];
-                $newCreditCard->expirationDateMonth = $dates[1];
-                $newCreditCard->save();
+                $newCreditCard = self::creditCardFactory(
+                    $client->credit_card->name, 
+                    $client->credit_card->type,
+                    $client->credit_card->number,
+                    $client->credit_card->expirationDate
+                );
 
-                $newClient = new Client();
-                $newClient->credit_card_id = $newCreditCard->id;
-                $newClient->name = $client->name;
-                $newClient->address = $client->address;
-                $newClient->checked = $client->checked;
-                $newClient->description = $client->description;
-                $newClient->interest = $client->interest;
-                $newClient->email = $client->email;
-                $newClient->account = $client->account;
+                $newClient = self::clientFactory(
+                    $client->name, 
+                    $client->address,
+                    $client->checked,
+                    $client->description, 
+                    $client->interest,
+                    $client->email, 
+                    $client->account
+                );
+
                 $dateSubstring = substr($client->date_of_birth, 0, 10);
+                $isBetween18and65 = true;
                 if (strpos($dateSubstring, "/")) {
-                    $newClient->dateOfBirth = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
+                    $parsedDate = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
+                    $newClient->dateOfBirth = $parsedDate;
+                    $isBetween18and65 = self::isBetween18and65($parsedDate);
                 } elseif(strpos($dateSubstring, "-")) {
                     $parsedDate = date("Y-m-d", strtotime($dateSubstring));
                     $newClient->dateOfBirth = $parsedDate;
+                    $isBetween18and65 = self::isBetween18and65($parsedDate);
                 }
-                $newClient->save();
+                if ($isBetween18and65) {
+                    $newCreditCard->save();
+                    $newClient->credit_card_id = $newCreditCard->id;
+                    $newClient->save();
+                }
+                if ($counter === 500) {
+                    $counter = 0;
+                    echo 'Added 500 records' . PHP_EOL;
+                }
             }
             echo 'JSON processed smoothly and data added to the database.';
         });
         
+    }
+
+    private static function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
+    {
+        $creditCard = new CreditCard();
+        $dates = explode("/", $expirationDate);
+        $creditCard->name = $name;
+        $creditCard->type = $type;
+        $creditCard->number = $number;
+        $creditCard->expirationDateDay = $dates[0];
+        $creditCard->expirationDateMonth = $dates[1];
+        return $creditCard;
+    }
+
+    private static function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
+    {
+        $client = new Client();
+        $client->name = $name;
+        $client->address = $address;
+        $client->checked = $checked;
+        $client->description = $description;
+        $client->interest = $interest;
+        $client->email = $email;
+        $client->account = $account;
+        return $client;
+    }
+
+    private static function isBetween18and65(string $date): bool
+    {
+        $now = date("Y-m-d");
+        $date18years = date('Y-m-d', strtotime('-18 years', strtotime($now)));
+        $date65years = date('Y-m-d', strtotime('-65 years', strtotime($now)));
+        if (strtotime($date65years) < strtotime($date) && strtotime($date) < strtotime($date18years)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
