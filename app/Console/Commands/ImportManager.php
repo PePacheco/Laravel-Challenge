@@ -15,7 +15,7 @@ class ImportManager extends Command
      *
      * @var string
      */
-    protected $signature = 'command:import';
+    protected $signature = 'command:import {file}';
 
     /**
      * The console command description.
@@ -31,7 +31,8 @@ class ImportManager extends Command
      */
     public function handle()
     {
-        $data = json_decode(file_get_contents('challenge.json'), false);
+        $file = $this->argument('file');
+        $data = json_decode(file_get_contents($file), false);
 
         ini_set('max_execution_time', 120000);
         DB::transaction(function() use ($data) {

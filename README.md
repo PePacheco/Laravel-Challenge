@@ -25,7 +25,7 @@ php artisan migrate
 ## 4# Step
 Run this command to execute the process execution
 ```
-php artisan command:import
+php artisan command:import challenge.json
 ```
 
 ## 5# Step
