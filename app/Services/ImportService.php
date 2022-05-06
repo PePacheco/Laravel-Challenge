@@ -5,10 +5,15 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\Factories\ClientFactory;
 use App\Factories\CreditCardFactory;
-use App\Exceptions\FileEmptyException;
+use Exception;
 class ImportService {
 
     public function execute(array $data) {
+        
+        if (empty($data)) {
+            throw new Exception('The file was empty');
+        }
+
         $counter = 0;
         foreach($data as $client) {
             $counter++;
