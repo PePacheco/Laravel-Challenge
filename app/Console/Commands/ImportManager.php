@@ -57,9 +57,10 @@ class ImportManager extends Command
                 $newClient->account = $client->account;
                 $dateSubstring = substr($client->date_of_birth, 0, 10);
                 if (strpos($dateSubstring, "/")) {
-                    $newClient->dateOfBirth = Carbon::createFromFormat('d/m/Y', $dateSubstring);
+                    $newClient->dateOfBirth = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
                 } elseif(strpos($dateSubstring, "-")) {
-                    $newClient->dateOfBirth = Carbon::createFromFormat('Y-m-d', $dateSubstring);
+                    $parsedDate = date("Y-m-d", strtotime($dateSubstring));
+                    $newClient->dateOfBirth = $parsedDate;
                 }
                 $newClient->save();
             }

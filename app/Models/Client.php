@@ -28,8 +28,6 @@ class Client extends Model
         'credit_card_id',
     ];
 
-    protected $dates = ['dateOfBirth'];
-
     public $timestamps = true;
 
 
