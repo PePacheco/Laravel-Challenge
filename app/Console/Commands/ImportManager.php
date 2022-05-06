@@ -4,9 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use App\Models\Client;
-use App\Models\CreditCard;
-use Carbon\Carbon;
+use App\Services\ImportService;
 
 class ImportManager extends Command
 {
@@ -33,90 +31,16 @@ class ImportManager extends Command
     {
         $file = $this->argument('file');
         $data = json_decode(file_get_contents($file), false);
+        
+        $importService = new ImportService();
 
         ini_set('max_execution_time', 120000);
-        DB::transaction(function() use ($data) {
-            $counter = 0;
-            foreach($data as $client) {
-                $counter++;
 
-                $newCreditCard = $this->creditCardFactory(
-                    $client->credit_card->name, 
-                    $client->credit_card->type,
-                    $client->credit_card->number,
-                    $client->credit_card->expirationDate
-                );
-
-                $newClient = $this->clientFactory(
-                    $client->name, 
-                    $client->address,
-                    $client->checked,
-                    $client->description, 
-                    $client->interest,
-                    $client->email, 
-                    $client->account
-                );
-
-                $dateSubstring = substr($client->date_of_birth, 0, 10);
-                $isBetween18and65 = true;
-                if (strpos($dateSubstring, "/")) {
-                    $parsedDate = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
-                    $newClient->dateOfBirth = $parsedDate;
-                    $isBetween18and65 = $this->isBetween18and65($parsedDate);
-                } elseif(strpos($dateSubstring, "-")) {
-                    $parsedDate = date("Y-m-d", strtotime($dateSubstring));
-                    $newClient->dateOfBirth = $parsedDate;
-                    $isBetween18and65 = $this->isBetween18and65($parsedDate);
-                }
-                if ($isBetween18and65) {
-                    $newCreditCard->save();
-                    $newClient->credit_card_id = $newCreditCard->id;
-                    $newClient->save();
-                }
-                if ($counter === 500) {
-                    $counter = 0;
-                    echo 'Added 500 records' . PHP_EOL;
-                }
-            }
-            echo 'JSON processed smoothly and data added to the database.';
+        DB::transaction(function() use ($data, $importService) {
+            $importService->execute($data);
         });
         
     }
 
-    public function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
-    {
-        $creditCard = new CreditCard();
-        $dates = explode("/", $expirationDate);
-        $creditCard->name = $name;
-        $creditCard->type = $type;
-        $creditCard->number = $number;
-        $creditCard->expirationDateDay = $dates[0];
-        $creditCard->expirationDateMonth = $dates[1];
-        return $creditCard;
-    }
-
-    public function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
-    {
-        $client = new Client();
-        $client->name = $name;
-        $client->address = $address;
-        $client->checked = $checked;
-        $client->description = $description;
-        $client->interest = $interest;
-        $client->email = $email;
-        $client->account = $account;
-        return $client;
-    }
-
-    public function isBetween18and65(string $date): bool
-    {
-        $now = date("Y-m-d");
-        $date18years = date('Y-m-d', strtotime('-18 years', strtotime($now)));
-        $date65years = date('Y-m-d', strtotime('-65 years', strtotime($now)));
-        if (strtotime($date65years) < strtotime($date) && strtotime($date) < strtotime($date18years)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    
 }

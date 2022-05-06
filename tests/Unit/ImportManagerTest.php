@@ -3,41 +3,43 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use App\Console\Commands\ImportManager;
+use App\Services\ImportService;
 use App\Models\Client;
 use App\Models\CreditCard;
+use App\Factories\ClientFactory;
+use App\Factories\CreditCardFactory;
 
 class ImportManagerTest extends TestCase
 {
 
-    private ?ImportManager $importManager;
+    private ?ImportService $importService;
 
     function setUp(): void
     {
-        $this->importManager = new ImportManager();
+        $this->importService = new ImportService();
     }
 
     function tearDown(): void
     {
-        $this->importManager = NULL;
+        $this->importService = NULL;
     }
 
     public function testIsBetween18and65Correct() 
     {
         $date = '2000-01-01';
-        $this->assertEquals(true, $this->importManager->isBetween18and65($date));
+        $this->assertEquals(true, $this->importService->isBetween18and65($date));
     }
 
     public function testIsBetween18and65LessThen18() 
     {
         $date = '2020-01-01';
-        $this->assertEquals(false, $this->importManager->isBetween18and65($date));
+        $this->assertEquals(false, $this->importService->isBetween18and65($date));
     }
 
     public function testIsBetween18and65MoreThen65() 
     {
         $date = '1950-01-01';
-        $this->assertEquals(false, $this->importManager->isBetween18and65($date));
+        $this->assertEquals(false, $this->importService->isBetween18and65($date));
     }
 
     public function testClientFactory()
@@ -51,7 +53,9 @@ class ImportManagerTest extends TestCase
         $client->email = 'example@email.com';
         $client->account = 'Pedro Pacheco';
 
-        $factoryClient = $this->importManager->clientFactory(
+        $clientFactory = new ClientFactory();
+
+        $factoryClient = $clientFactory->create(
             'Pedro', 
             'Random Street',
             true,
@@ -73,8 +77,9 @@ class ImportManagerTest extends TestCase
         $creditCard->expirationDateDay = '12';
         $creditCard->expirationDateMonth = '01';
 
+        $creditCardFactory = new CreditCardFactory();
 
-        $factoryCreditCard = $this->importManager->creditCardFactory(
+        $factoryCreditCard = $creditCardFactory->create(
             'Pedro', 
             'Visa',
             '1234',
@@ -88,7 +93,9 @@ class ImportManagerTest extends TestCase
     {
         $this->expectError(TypeError::class);
 
-        $factoryCreditCard = $this->importManager->creditCardFactory(
+        $creditCardFactory = new CreditCardFactory();
+
+        $factoryCreditCard = $creditCardFactory->create(
             NULL, 
             'Visa',
             '1234',
@@ -101,7 +108,9 @@ class ImportManagerTest extends TestCase
     {
         $this->expectError(TypeError::class);
 
-        $factoryClient = $this->importManager->clientFactory(
+        $clientFactory = new ClientFactory();
+
+        $factoryClient = $clientFactory->create(
             NULL, 
             'Random Street',
             true,
