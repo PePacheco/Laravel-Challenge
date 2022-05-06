@@ -9,10 +9,22 @@ use App\Models\CreditCard;
 
 class ImportManagerTest extends TestCase
 {
-    public function testIsBetween18and65() 
+    public function testIsBetween18and65Correct() 
     {
         $date = '2000-01-01';
         $this->assertEquals(true, ImportManager::isBetween18and65($date));
+    }
+
+    public function testIsBetween18and65LessThen18() 
+    {
+        $date = '2020-01-01';
+        $this->assertEquals(false, ImportManager::isBetween18and65($date));
+    }
+
+    public function testIsBetween18and65MoreThen65() 
+    {
+        $date = '1950-01-01';
+        $this->assertEquals(false, ImportManager::isBetween18and65($date));
     }
 
     public function testClientFactory()
