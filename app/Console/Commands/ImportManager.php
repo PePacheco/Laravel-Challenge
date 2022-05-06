@@ -39,14 +39,14 @@ class ImportManager extends Command
             foreach($data as $client) {
                 $counter++;
 
-                $newCreditCard = self::creditCardFactory(
+                $newCreditCard = $this->creditCardFactory(
                     $client->credit_card->name, 
                     $client->credit_card->type,
                     $client->credit_card->number,
                     $client->credit_card->expirationDate
                 );
 
-                $newClient = self::clientFactory(
+                $newClient = $this->clientFactory(
                     $client->name, 
                     $client->address,
                     $client->checked,
@@ -61,11 +61,11 @@ class ImportManager extends Command
                 if (strpos($dateSubstring, "/")) {
                     $parsedDate = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
                     $newClient->dateOfBirth = $parsedDate;
-                    $isBetween18and65 = self::isBetween18and65($parsedDate);
+                    $isBetween18and65 = $this->isBetween18and65($parsedDate);
                 } elseif(strpos($dateSubstring, "-")) {
                     $parsedDate = date("Y-m-d", strtotime($dateSubstring));
                     $newClient->dateOfBirth = $parsedDate;
-                    $isBetween18and65 = self::isBetween18and65($parsedDate);
+                    $isBetween18and65 = $this->isBetween18and65($parsedDate);
                 }
                 if ($isBetween18and65) {
                     $newCreditCard->save();
@@ -82,7 +82,7 @@ class ImportManager extends Command
         
     }
 
-    public static function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
+    public function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
     {
         $creditCard = new CreditCard();
         $dates = explode("/", $expirationDate);
@@ -94,7 +94,7 @@ class ImportManager extends Command
         return $creditCard;
     }
 
-    public static function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
+    public function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
     {
         $client = new Client();
         $client->name = $name;
@@ -107,7 +107,7 @@ class ImportManager extends Command
         return $client;
     }
 
-    public static function isBetween18and65(string $date): bool
+    public function isBetween18and65(string $date): bool
     {
         $now = date("Y-m-d");
         $date18years = date('Y-m-d', strtotime('-18 years', strtotime($now)));

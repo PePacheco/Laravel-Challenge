@@ -9,22 +9,35 @@ use App\Models\CreditCard;
 
 class ImportManagerTest extends TestCase
 {
+
+    private ?ImportManager $importManager;
+
+    function setUp(): void
+    {
+        $this->importManager = new ImportManager();
+    }
+
+    function tearDown(): void
+    {
+        $this->importManager = NULL;
+    }
+
     public function testIsBetween18and65Correct() 
     {
         $date = '2000-01-01';
-        $this->assertEquals(true, ImportManager::isBetween18and65($date));
+        $this->assertEquals(true, $this->importManager->isBetween18and65($date));
     }
 
     public function testIsBetween18and65LessThen18() 
     {
         $date = '2020-01-01';
-        $this->assertEquals(false, ImportManager::isBetween18and65($date));
+        $this->assertEquals(false, $this->importManager->isBetween18and65($date));
     }
 
     public function testIsBetween18and65MoreThen65() 
     {
         $date = '1950-01-01';
-        $this->assertEquals(false, ImportManager::isBetween18and65($date));
+        $this->assertEquals(false, $this->importManager->isBetween18and65($date));
     }
 
     public function testClientFactory()
@@ -38,7 +51,7 @@ class ImportManagerTest extends TestCase
         $client->email = 'example@email.com';
         $client->account = 'Pedro Pacheco';
 
-        $factoryClient = ImportManager::clientFactory(
+        $factoryClient = $this->importManager->clientFactory(
             'Pedro', 
             'Random Street',
             true,
@@ -61,7 +74,7 @@ class ImportManagerTest extends TestCase
         $creditCard->expirationDateMonth = '01';
 
 
-        $factoryCreditCard = ImportManager::creditCardFactory(
+        $factoryCreditCard = $this->importManager->creditCardFactory(
             'Pedro', 
             'Visa',
             '1234',
@@ -75,7 +88,7 @@ class ImportManagerTest extends TestCase
     {
         $this->expectError(TypeError::class);
 
-        $factoryCreditCard = ImportManager::creditCardFactory(
+        $factoryCreditCard = $this->importManager->creditCardFactory(
             NULL, 
             'Visa',
             '1234',
@@ -88,7 +101,7 @@ class ImportManagerTest extends TestCase
     {
         $this->expectError(TypeError::class);
 
-        $factoryClient = ImportManager::clientFactory(
+        $factoryClient = $this->importManager->clientFactory(
             NULL, 
             'Random Street',
             true,
