@@ -82,7 +82,7 @@ class ImportManager extends Command
         
     }
 
-    private static function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
+    public static function creditCardFactory(string $name, string $type, string $number, string $expirationDate): CreditCard 
     {
         $creditCard = new CreditCard();
         $dates = explode("/", $expirationDate);
@@ -94,7 +94,7 @@ class ImportManager extends Command
         return $creditCard;
     }
 
-    private static function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
+    public static function clientFactory(string $name, ?string $address, string $checked, ?string $description, ?string $interest, ?string $email, string $account): Client 
     {
         $client = new Client();
         $client->name = $name;
@@ -107,7 +107,7 @@ class ImportManager extends Command
         return $client;
     }
 
-    private static function isBetween18and65(string $date): bool
+    public static function isBetween18and65(string $date): bool
     {
         $now = date("Y-m-d");
         $date18years = date('Y-m-d', strtotime('-18 years', strtotime($now)));

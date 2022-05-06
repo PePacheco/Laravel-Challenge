@@ -24,3 +24,9 @@ php artisan command:import
 
 ## 5# Step
 Wait untill a message appears on your terminal pointing that the process worked successfully
+
+## 6# Step
+Run the command to test the application
+```
+php artisan test
+```
