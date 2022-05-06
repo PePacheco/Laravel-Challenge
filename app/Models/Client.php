@@ -22,11 +22,13 @@ class Client extends Model
         'checked',
         'description',
         'interest',
-        'date_of_birth',
+        'dateOfBirth',
         'email',
         'account',
         'credit_card_id',
     ];
+
+    protected $dates = ['dateOfBirth'];
 
     public $timestamps = true;
 

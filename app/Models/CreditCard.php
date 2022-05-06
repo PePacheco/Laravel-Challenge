@@ -20,8 +20,8 @@ class CreditCard extends Model
         'type',
         'number',
         'name',
-        'expiration_date_day',
-        'expiration_date_month'
+        'expirationDateDay',
+        'expirationDateMonth'
     ];
 
     public $timestamps = true;

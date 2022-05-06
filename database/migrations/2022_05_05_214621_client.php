@@ -20,8 +20,8 @@ return new class extends Migration
             $table->boolean("checked");
             $table->text('description')->nullable();
             $table->string('interest')->nullable();
-            $table->date("date_of_birth");
-            $table->string("email");
+            $table->date("dateOfBirth")->nullable();
+            $table->string("email")->nullable();
             $table->string("account");
 
             $table->unsignedBigInteger('credit_card_id');

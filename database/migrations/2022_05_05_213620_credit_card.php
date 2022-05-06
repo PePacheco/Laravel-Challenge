@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('number');
             $table->string("name");
-            $table->string("expiration_date_day");
-            $table->string("expiration_date_month");
+            $table->string("expirationDateDay");
+            $table->string("expirationDateMonth");
             $table->timestamps();
         });
     }
