@@ -5,19 +5,19 @@
 Change the name of the .env.example file to .env
 
 ## 2# Step
-Run this command
+Run the command to run the MySQL container
 ```
 docker-compose up -d
 ```
 
 ## 3# Step
-Run this command
+Run the command to execute the migrations
 ```
 php artisan migrate
 ```
 
 ## 4# Step
-Run this command
+Run the command to execute the process execution
 ```
 php artisan command:import
 ```
