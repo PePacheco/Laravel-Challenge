@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\CreditCard;
 use App\Factories\ClientFactory;
 use App\Factories\CreditCardFactory;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class ImportManagerTest extends TestCase
 {
@@ -30,13 +31,13 @@ class ImportManagerTest extends TestCase
         $this->assertEquals(true, $this->importService->isBetween18and65($date));
     }
 
-    public function testIsBetween18and65LessThen18() 
+    public function testIsBetween18and65LessThan18() 
     {
         $date = '2020-01-01';
         $this->assertEquals(false, $this->importService->isBetween18and65($date));
     }
 
-    public function testIsBetween18and65MoreThen65() 
+    public function testIsBetween18and65MoreThan65() 
     {
         $date = '1950-01-01';
         $this->assertEquals(false, $this->importService->isBetween18and65($date));
