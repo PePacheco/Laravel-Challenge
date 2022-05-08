@@ -2,11 +2,20 @@
 
 namespace App\Services;
 
+use App\Repositories\ClientsRepository\IClientsRepository;
 use Carbon\Carbon;
-use App\Factories\ClientFactory;
-use App\Factories\CreditCardFactory;
+use App\Repositories\CreditCardsRepository\ICreditCardsRepository;
 use Exception;
 class ImportService {
+
+    private ICreditCardsRepository $creditCardRepository;
+    private IClientsRepository $clientsRepository;
+
+    function __construct(ICreditCardsRepository $creditCardRepository, IClientsRepository $clientsRepository)
+    {
+        $this->creditCardRepository = $creditCardRepository;
+        $this->clientsRepository = $clientsRepository;
+    }
 
     public function execute(array $data) {
         
@@ -16,43 +25,40 @@ class ImportService {
 
         $counter = 0;
         foreach($data as $client) {
-            $counter++;
-
-            $creditCardFactory = new CreditCardFactory();
-            $newCreditCard = $creditCardFactory->create(
-                $client->credit_card->name, 
-                $client->credit_card->type,
-                $client->credit_card->number,
-                $client->credit_card->expirationDate
-            );
-
-            $clientFactory = new ClientFactory();
-            $newClient = $clientFactory->create(
-                $client->name, 
-                $client->address,
-                $client->checked,
-                $client->description, 
-                $client->interest,
-                $client->email, 
-                $client->account
-            );
-
+            $dateOfBirth = NULL;
             $dateSubstring = substr($client->date_of_birth, 0, 10);
             $isBetween18and65 = true;
+
             if (strpos($dateSubstring, "/")) {
                 $parsedDate = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
-                $newClient->dateOfBirth = $parsedDate;
+                $dateOfBirth = $parsedDate;
                 $isBetween18and65 = $this->isBetween18and65($parsedDate);
             } elseif(strpos($dateSubstring, "-")) {
                 $parsedDate = date("Y-m-d", strtotime($dateSubstring));
-                $newClient->dateOfBirth = $parsedDate;
+                $dateOfBirth = $parsedDate;
                 $isBetween18and65 = $this->isBetween18and65($parsedDate);
             }
             if ($isBetween18and65) {
-                $newCreditCard->save();
-                $newClient->credit_card_id = $newCreditCard->id;
-                $newClient->save();
+                $newCreditCard = $this->creditCardRepository->create(
+                    $client->credit_card->name, 
+                    $client->credit_card->type,
+                    $client->credit_card->number,
+                    $client->credit_card->expirationDate
+                );
+
+                $this->clientsRepository->create(
+                    $client->name, 
+                    $client->address,
+                    $client->checked,
+                    $client->description, 
+                    $client->interest,
+                    $client->email, 
+                    $client->account,
+                    $newCreditCard->id,
+                    $dateOfBirth
+                );
             }
+            $counter++;
             if ($counter === 500) {
                 $counter = 0;
                 echo 'Added 500 records' . PHP_EOL;

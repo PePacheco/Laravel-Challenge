@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use App\Services\ImportService;
+use App\Repositories\CreditCardsRepository\CreditCardsRepository;
+use App\Repositories\ClientsRepository\ClientsRepository;
 use Exception;
 
 class ImportManagerTest extends TestCase
@@ -13,7 +15,7 @@ class ImportManagerTest extends TestCase
 
     function setUp(): void
     {
-        $this->importService = new ImportService();
+        $this->importService = new ImportService(new CreditCardsRepository(), new ClientsRepository());
     }
 
     function tearDown(): void

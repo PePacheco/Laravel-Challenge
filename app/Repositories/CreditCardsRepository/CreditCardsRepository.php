@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Factories;
+namespace App\Repositories\CreditCardsRepository;
 
 use App\Models\CreditCard;
 
-final class CreditCardFactory {
-    public function Create(string $name, string $type, string $number, string $expirationDate): CreditCard 
-    {
+class CreditCardsRepository implements ICreditCardsRepository {
+    function create(string $name, string $type, string $number, string $expirationDate): CreditCard {
         $creditCard = new CreditCard();
         $dates = explode("/", $expirationDate);
         $creditCard->name = $name;
@@ -14,6 +13,7 @@ final class CreditCardFactory {
         $creditCard->number = $number;
         $creditCard->expirationDateDay = $dates[0];
         $creditCard->expirationDateMonth = $dates[1];
+        $creditCard->save();
         return $creditCard;
     }
 }

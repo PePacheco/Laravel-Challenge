@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Repositories\ClientsRepository\ClientsRepository;
+use App\Repositories\CreditCardsRepository\CreditCardsRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Services\ImportService;
@@ -32,7 +34,10 @@ class ImportManager extends Command
         $file = $this->argument('file');
         $data = json_decode(file_get_contents($file), false);
         
-        $importService = new ImportService();
+        $creditCardRepository = new CreditCardsRepository(); 
+        $clientsRepository = new ClientsRepository();
+        
+        $importService = new ImportService($creditCardRepository, $clientsRepository);
 
         ini_set('max_execution_time', 120000);
 
