@@ -32,7 +32,7 @@ class ImportServiceTest extends TestCase
         }
     }
 
-    public function testExecutingAdding()
+    public function testExecutingAddingCorrectly()
     {
         $data = [
             [
