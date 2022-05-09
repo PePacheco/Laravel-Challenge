@@ -80,7 +80,7 @@ class ImportServiceTest extends TestCase
         $this->assertTrue($recordsAdded === 0);
     }
 
-    public function testExecutingNotAddingBecauseOfMissingFields()
+    public function testExecutingNotAddingBecauseOfMissingFieldName()
     {
         $data = [
             [
