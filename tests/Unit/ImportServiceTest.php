@@ -80,6 +80,29 @@ class ImportServiceTest extends TestCase
         $this->assertTrue($recordsAdded === 0);
     }
 
+    public function testExecutingNotAddingBecauseOfMissingFields()
+    {
+        $data = [
+            [
+                'address' => NULL, 
+                'checked' => 1,
+                'description' => NULL,
+                'interest' => NULL,
+                'email' => 'test@test.com',
+                'account' => 'pedro',
+                'date_of_birth' => '1989-03-21T01:11:13+00:00',
+                'credit_card' => [
+                    'name' => 'Pedro',
+                    'type' => 'Visa',
+                    'number' => '123456',
+                    'expirationDate' => '12/19'
+                ]
+            ]
+        ];
+        $recordsAdded = $this->importService->execute($data);
+        $this->assertTrue($recordsAdded === 0);
+    }
+
     public function testChallengeFileExists()
     {
         $this->assertFileExists('challenge.json');

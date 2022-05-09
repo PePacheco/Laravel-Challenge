@@ -25,6 +25,19 @@ class ImportService {
 
         $recordsAdded = 0;
         foreach($data as $client) {
+            if (
+                !array_key_exists('credit_card', $client) ||
+                !array_key_exists('name', $client) ||
+                !array_key_exists('checked', $client) ||
+                !array_key_exists('account', $client) ||
+                !array_key_exists('name', $client['credit_card']) ||
+                !array_key_exists('type', $client['credit_card']) ||
+                !array_key_exists('number', $client['credit_card']) ||
+                !array_key_exists('expirationDate', $client['credit_card'])
+            ) {
+                continue;
+            }
+
             $dateSubstring = substr($client['date_of_birth'], 0, 10);
 
             $formattedDateOfBirth = DateUtilities::formattingDate($dateSubstring);
