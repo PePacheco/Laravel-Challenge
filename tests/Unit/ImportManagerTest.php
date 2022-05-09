@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use App\Services\ImportService;
-use App\Repositories\CreditCardsRepository\CreditCardsRepository;
-use App\Repositories\ClientsRepository\ClientsRepository;
+use App\Repositories\ClientsRepository\ClientsRepositoryMock;
+use App\Repositories\CreditCardsRepository\CreditCardsRepositoryMock;
 use Exception;
 
 class ImportManagerTest extends TestCase
@@ -15,7 +15,7 @@ class ImportManagerTest extends TestCase
 
     function setUp(): void
     {
-        $this->importService = new ImportService(new CreditCardsRepository(), new ClientsRepository());
+        $this->importService = new ImportService(new CreditCardsRepositoryMock(), new ClientsRepositoryMock());
     }
 
     function tearDown(): void
@@ -32,21 +32,15 @@ class ImportManagerTest extends TestCase
         }
     }
 
-    public function testIsBetween18and65Correct() 
+    public function testExecutingCorrectly()
     {
-        $date = '2000-01-01';
-        $this->assertEquals(true, $this->importService->isBetween18and65($date));
+        $data = json_decode(file_get_contents('challenge.json'), false);
+        $recordsAdded = $this->importService->execute($data);
+        $this->assertTrue($recordsAdded > 0);
     }
 
-    public function testIsBetween18and65LessThan18() 
+    public function testChallengeFileExists()
     {
-        $date = '2020-01-01';
-        $this->assertEquals(false, $this->importService->isBetween18and65($date));
-    }
-
-    public function testIsBetween18and65MoreThan65() 
-    {
-        $date = '1950-01-01';
-        $this->assertEquals(false, $this->importService->isBetween18and65($date));
+        $this->assertFileExists('challenge.json');
     }
 }
