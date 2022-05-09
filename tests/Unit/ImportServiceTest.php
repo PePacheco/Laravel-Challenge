@@ -8,7 +8,7 @@ use App\Repositories\ClientsRepository\ClientsRepositoryMock;
 use App\Repositories\CreditCardsRepository\CreditCardsRepositoryMock;
 use Exception;
 
-class ImportManagerTest extends TestCase
+class ImportServiceTest extends TestCase
 {
 
     private ?ImportService $importService;
