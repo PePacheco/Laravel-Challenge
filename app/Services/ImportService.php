@@ -25,27 +25,27 @@ class ImportService {
 
         $recordsAdded = 0;
         foreach($data as $client) {
-            $dateSubstring = substr($client->date_of_birth, 0, 10);
+            $dateSubstring = substr($client['date_of_birth'], 0, 10);
 
             $formattedDateOfBirth = DateUtilities::formattingDate($dateSubstring);
             $isBetween18and65 = DateUtilities::isBetween18and65($formattedDateOfBirth);
             
             if ($isBetween18and65) {
                 $newCreditCard = $this->creditCardRepository->create(
-                    $client->credit_card->name, 
-                    $client->credit_card->type,
-                    $client->credit_card->number,
-                    $client->credit_card->expirationDate
+                    $client['credit_card']['name'], 
+                    $client['credit_card']['type'],
+                    $client['credit_card']['number'],
+                    $client['credit_card']['expirationDate']
                 );
 
                 $this->clientsRepository->create(
-                    $client->name, 
-                    $client->address,
-                    $client->checked,
-                    $client->description, 
-                    $client->interest,
-                    $client->email, 
-                    $client->account,
+                    $client['name'], 
+                    $client['address'],
+                    $client['checked'],
+                    $client['description'], 
+                    $client['interest'],
+                    $client['email'], 
+                    $client['account'],
                     $newCreditCard->id,
                     $formattedDateOfBirth
                 );

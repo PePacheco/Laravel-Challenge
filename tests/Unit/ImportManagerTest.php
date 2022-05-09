@@ -32,11 +32,52 @@ class ImportManagerTest extends TestCase
         }
     }
 
-    public function testExecutingCorrectly()
+    public function testExecutingAdding()
     {
-        $data = json_decode(file_get_contents('challenge.json'), false);
+        $data = [
+            [
+                'name' => 'Pedro', 
+                'address' => NULL, 
+                'checked' => 1,
+                'description' => NULL,
+                'interest' => NULL,
+                'email' => 'test@test.com',
+                'account' => 'pedro',
+                'date_of_birth' => '1989-03-21T01:11:13+00:00',
+                'credit_card' => [
+                    'name' => 'Pedro',
+                    'type' => 'Visa',
+                    'number' => '123456',
+                    'expirationDate' => '12/19'
+                ]
+            ]
+        ];
         $recordsAdded = $this->importService->execute($data);
-        $this->assertTrue($recordsAdded > 0);
+        $this->assertTrue($recordsAdded === 1);
+    }
+
+    public function testExecutingNotAddingBecauseOfAge()
+    {
+        $data = [
+            [
+                'name' => 'Pedro', 
+                'address' => NULL, 
+                'checked' => 1,
+                'description' => NULL,
+                'interest' => NULL,
+                'email' => 'test@test.com',
+                'account' => 'pedro',
+                'date_of_birth' => '2020-03-21T01:11:13+00:00',
+                'credit_card' => [
+                    'name' => 'Pedro',
+                    'type' => 'Visa',
+                    'number' => '123456',
+                    'expirationDate' => '12/19'
+                ]
+            ]
+        ];
+        $recordsAdded = $this->importService->execute($data);
+        $this->assertTrue($recordsAdded === 0);
     }
 
     public function testChallengeFileExists()

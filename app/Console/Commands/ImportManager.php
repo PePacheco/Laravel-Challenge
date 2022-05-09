@@ -32,7 +32,7 @@ class ImportManager extends Command
     public function handle()
     {
         $file = $this->argument('file');
-        $data = json_decode(file_get_contents($file), false);
+        $data = json_decode(file_get_contents($file), true);
         
         $creditCardRepository = new CreditCardsRepository(); 
         $clientsRepository = new ClientsRepository();
