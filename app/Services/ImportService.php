@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\ClientsRepository\IClientsRepository;
-use Carbon\Carbon;
 use App\Repositories\CreditCardsRepository\ICreditCardsRepository;
 use App\Utilities\DateUtilities;
 use Exception;
@@ -26,19 +25,11 @@ class ImportService {
 
         $recordsAdded = 0;
         foreach($data as $client) {
-            $dateOfBirth = NULL;
             $dateSubstring = substr($client->date_of_birth, 0, 10);
-            $isBetween18and65 = true;
 
-            if (strpos($dateSubstring, "/")) {
-                $parsedDate = Carbon::createFromFormat('d/m/Y', $dateSubstring)->format('Y-m-d');
-                $dateOfBirth = $parsedDate;
-                $isBetween18and65 = DateUtilities::isBetween18and65($parsedDate);
-            } elseif(strpos($dateSubstring, "-")) {
-                $parsedDate = date("Y-m-d", strtotime($dateSubstring));
-                $dateOfBirth = $parsedDate;
-                $isBetween18and65 = DateUtilities::isBetween18and65($parsedDate);
-            }
+            $formattedDateOfBirth = DateUtilities::formattingDate($dateSubstring);
+            $isBetween18and65 = DateUtilities::isBetween18and65($formattedDateOfBirth);
+            
             if ($isBetween18and65) {
                 $newCreditCard = $this->creditCardRepository->create(
                     $client->credit_card->name, 
@@ -56,7 +47,7 @@ class ImportService {
                     $client->email, 
                     $client->account,
                     $newCreditCard->id,
-                    $dateOfBirth
+                    $formattedDateOfBirth
                 );
 
                 $recordsAdded++;
