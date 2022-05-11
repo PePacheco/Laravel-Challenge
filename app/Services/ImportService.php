@@ -69,7 +69,6 @@ class ImportService {
                 echo 'Added 500 records' . PHP_EOL;
             }
         }
-        echo 'JSON processed smoothly and '. $recordsAdded .' records added to the database.';
 
         return $recordsAdded;
     }

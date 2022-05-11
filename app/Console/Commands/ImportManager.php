@@ -42,7 +42,8 @@ class ImportManager extends Command
         ini_set('max_execution_time', 120000);
 
         DB::transaction(function() use ($data, $importService) {
-            $importService->execute($data);
+            $recordsAdded = $importService->execute($data);
+            echo 'JSON processed smoothly and '. $recordsAdded .' records where added to the database.';
         });
         
     }
