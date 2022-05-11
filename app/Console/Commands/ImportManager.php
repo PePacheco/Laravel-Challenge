@@ -22,7 +22,7 @@ class ImportManager extends Command
      *
      * @var string
      */
-    protected $description = 'Importing the JSON content to the database';
+    protected $description = 'Importing a file content to the database containing clients and credit cards';
 
     /**
      * Execute the console command.
